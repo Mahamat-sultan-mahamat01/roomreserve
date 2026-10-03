@@ -48,6 +48,7 @@ def reservation_create(request):
     return JsonResponse({
         "id":reservation.id,
         "room":room.name, # The name of the room being reserved
+        "user":user.username, # The username of the user making the reservation
         "status":reservation.status, #The status of reservation
         "start_time":reservation.start_time,
         "end_time":reservation.end_time

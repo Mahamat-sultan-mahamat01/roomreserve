@@ -5,9 +5,9 @@ from apps.rooms.models import Room
 # Create your models here.
 class Reservation(models.Model):
     class Status(models.TextChoices):
-        PENDING = "PE",('pending')
-        CONFIRMED = 'CO',('confirmed')
-        CANCELLED = 'CA',('cancelled')
+        PENDING = "pending","pending"
+        CONFIRMED = "confirmed","confirmed"
+        CANCELLED = "cancelled","cancelled"
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='reservations')
     room = models.ForeignKey(Room, on_delete=models.CASCADE,related_name='reservations')
