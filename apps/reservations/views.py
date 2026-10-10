@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import json
 from datetime import datetime
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
@@ -16,14 +17,16 @@ def reservation_list(request):
         'id','room__name','user__username','status','start_time','end_time'
     )
     return JsonResponse({"result":list(reservation)})
+
+
 @csrf_exempt # This view is exempt from CSRF verification
 @require_http_methods(['POST']) # mean only post method is allowed
 def reservation_create(request):
     payload = json.loads(request.body) # parse the JSON payload of load the data
     room = Room.objects.get(pk=payload['room_id']) # get the room object based on the room_id in the payload
     user = User.objects.get(pk=payload['user_id']) # get the user object based on the user_id in the payload
-    start_time = datetime.fromisoformat(payload['start_time']) # convert the start_time string to a datetime object
-    end_time = datetime.fromisoformat(payload['end_time']) # convert the end_time string to a datetime object
+    start_time = timezone.make_aware(datetime.fromisoformat(payload['start_time'])) # convert the start_time string to a datetime object
+    end_time = timezone.make_aware(datetime.fromisoformat(payload['end_time'])) # convert the end_time string to a datetime object
 
     if start_time >= end_time:
         return JsonResponse({"error":"start_time must be before end_time"},status=400)

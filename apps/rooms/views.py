@@ -12,7 +12,7 @@ def room_stat(request):
           total_reservation=Count("reservations",filter=Q(
          reservations__status__in=["pending","confirmed"]
       )))
-      .filter(total_reservation__gt=0) #just thoses with reservations
+      .filter(total_reservation__gt=0)
       .order_by("-total_reservation")[:5] #order by total reservation and limit to 5
    )
    #design manual json
@@ -30,7 +30,7 @@ def room_stat(request):
 
 def room_list(request):
     rooms =Room.objects.filter(is_active=True).values('id','name','capacity','location')
-    return JsonResponse({"resultant": list(rooms)})
+    return JsonResponse({"results": list(rooms)})
 def room_detail(request,pk):
     room = get_object_or_404(Room, pk=pk)
     data = {
