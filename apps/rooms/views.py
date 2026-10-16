@@ -3,6 +3,38 @@ from django.http import JsonResponse
 from .models import Room
 from django.db.models import Q,Count
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import viewsets
+from rest_framework import status
+from .serializers import RoomSerializer
+
+#viewsets
+class RoomViewSet(viewsets.ModelViewSet):
+    """
+    A ViewSet that gives you 5 endpoints for free:
+    - GET    /api/v2/rooms/        → list all
+    - POST   /api/v2/rooms/        → create
+    - GET    /api/v2/rooms/{id}/   → retrieve one
+    - PUT    /api/v2/rooms/{id}/   → full update
+    - PATCH  /api/v2/rooms/{id}/   → partial update
+    - DELETE /api/v2/rooms/{id}/   → delete
+    """
+    queryset = Room.objects.filter(is_active = True)
+    serializer_class  = RoomSerializer
+    
+     
+
+
+#list room with drf
+@api_view(["GET"])
+def room_list_drf(requests):
+    rooms = Room.objects.filter(is_active = True)
+    serializer = RoomSerializer(rooms, many = True) #many =True for rooms list
+    return Response(serializer.data)
+
+
+
 # Create your views here.
 def room_stat(request):
    #Get 5 high active rooms and their reservations count

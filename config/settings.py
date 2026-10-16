@@ -1,3 +1,6 @@
+import os
+import sys
+
 """
 Django settings for config project.
 
@@ -38,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #my apps
+    'rest_framework',
     'apps.rooms',
     'apps.reservations',
 ]
@@ -77,11 +81,29 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
+    # Production DB config (Postgres) — used by Docker
+    # Config DB prod (Postgres) — utilisée par Docker
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get("POSTGRES_DB","roomreserve"),
+        "USER":os.environ.get("POSTGRES_USER","roomreserve"),
+        "PASSWORD":os.environ.get("POSTGRES_PASSWORD","roomreserve"),
+        "HOST":os.environ.get("POSTGRES_HOST","localhost"),
+        "PORT":os.environ.get("POSTGRES_PORT",5432)
     }
 }
+# Tests use SQLite (fast, isolated) / Les tests utilisent SQLite (rapide, isolé)
+if "pytest" in sys.modules:
+    DATABASES ={
+
+        "default":{
+            "ENGINE":"django.db.backends.sqlite3",
+            "NAME":str(BASE_DIR / "db.sqlite3"),
+        }
+
+       
+    }
+
 
 
 # Password validation
@@ -124,3 +146,18 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ),
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),   # 1 hour / 1 heure
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),      # 1 week / 1 semaine
+}

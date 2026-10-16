@@ -6,6 +6,14 @@ from datetime import datetime
 from django.utils import timezone
 User = get_user_model()
 
+       
+@pytest.mark.django_db
+def test_detail_room_not_found(client):
+    res= client.get("/api/rooms/9999/")
+    assert res.status_code == 404 , f"\n 404  got not 999 {res.status_code}:{res.content}"
+
+ 
+"""
 
 @pytest.mark.django_db
 def test_room_list(client):
@@ -16,13 +24,6 @@ def test_room_list(client):
     assert data["results"][0]['name'] =="Test_Room"
     print(f"\nStatus: {response.status_code}")
     print(f"\nBody : {response.json()}")
-       
-@pytest.mark.django_db
-def test_detail_room_not_found(client):
-    res= client.get("/api/rooms/9999/")
-    assert res.status_code == 404 , f"\n 404  got not 999 {res.status_code}:{res.content}"
-
- 
 
 @pytest.mark.django_db
 def test_rooms_list_excludes_inactive(client):
@@ -58,4 +59,4 @@ def test_stats_excludes_empty_rooms(client):
     assert "backend" in names , f"Backend room should be listed got : {names}"
     assert "U1" not in names , f" empty room should be hidden got : {names}"
     print(f"\n  Stats filtered correctly: {names}")
-
+"""

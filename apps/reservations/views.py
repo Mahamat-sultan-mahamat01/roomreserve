@@ -8,7 +8,23 @@ from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from .models import Reservation
 from apps.rooms.models import Room
+from rest_framework import viewsets, permissions,status
+from rest_framework.response import Response
+from .serializers import ReservationSerializer
 
+class ReservationViewSet(viewsets.ModelViewSet):
+    queryset  = Reservation.objects.select_related("user","room").all()
+    serializer_class= ReservationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+     #method
+    def perform_create(self,serializer):
+        """
+            Called by DRF right before saving.
+            Appelé par DRF juste avant la sauvegarde.
+            Here we attach the current user automatically.
+            Ici on attache l'utilisateur courant automatiquement.
+            """
+        serializer.save(user = self.request.user)
 
 User = get_user_model()
 @require_http_methods(['GET']) #mean only get method is allowed
