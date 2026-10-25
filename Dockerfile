@@ -22,7 +22,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the code / Copie le code
 COPY . .
+# Make entrypoint executable / Rend l'entrypoint exécutable
+Run chmod +x /app/entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "gunicorn","0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver","0.0.0.0:8000"]
