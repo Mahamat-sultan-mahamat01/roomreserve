@@ -4,10 +4,11 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerCommand: sh -c "python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 2"
+    plan: free
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: roomreservation-db
+          name: roomreserve-db
           property: connectionString
       - key: SECRET_KEY
         generateValue: true
@@ -15,10 +16,9 @@ services:
         value: .onrender.com
       - key: DEBUG
         value: "False"
-      
+
 databases:
   - name: roomreserve-db
-    plan: true
+    plan: free
     databaseName: roomreserve
     user: roomreserve
-
