@@ -99,7 +99,7 @@ if "pytest"in sys.modules: # Tests use SQLite (fast, isolated) / Les tests utili
     DATABASES = {
         "default":
         {
-            "ENGIME":"django.db.backends.sqlite3",
+            "ENGINE":"django.db.backends.sqlite3",
             "NAME":str(BASE_DIR/  "db.sqlite3"),
         }
     }
@@ -112,7 +112,7 @@ else:
             # Production DB config (Postgres) — used by Docker
             'default':
             {
-                "ENGIME":"django.db.backends.postgresql",
+                "ENGINE":"django.db.backends.postgresql",
                 "NAME":os.environ.get("POSTGRES_DB","roomreserve"),
                 "USER":os.environ.get("POSTGRES_USER","roomreserve"),
                 "PASSWORD":os.environ.get("POSTGRES_PASSWORD","roomreserve"),
@@ -159,6 +159,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
