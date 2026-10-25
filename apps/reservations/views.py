@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
+from rest_framework.decorators import action
 from .models import Reservation
 from apps.rooms.models import Room
 from rest_framework import viewsets, permissions,status
@@ -13,18 +14,72 @@ from rest_framework.response import Response
 from .serializers import ReservationSerializer
 
 class ReservationViewSet(viewsets.ModelViewSet):
-    queryset  = Reservation.objects.select_related("user","room").all()
-    serializer_class= ReservationSerializer
-    permission_classes = [permissions.IsAuthenticated]
-     #method
-    def perform_create(self,serializer):
-        """
-            Called by DRF right before saving.
-            Appelé par DRF juste avant la sauvegarde.
-            Here we attach the current user automatically.
-            Ici on attache l'utilisateur courant automatiquement.
-            """
-        serializer.save(user = self.request.user)
+    queryset = Reservation.objects.select_related("room","user").all()
+    serializer_class = ReservationSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filterset_fields = ["room","status","user"]
+    ordering_fields = ["start_time","end_time","created_at"]
+
+    #auto user connect current
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    #pay simule to confirm
+    """
+         1 Seul le propriétaire peut payer	403 Forbidden
+        2	On ne peut payer qu'une résa pending	400 Bad Request
+        3	Une fois payée, elle est confirmed	200 OK
+        4	On ne peut pas payer une résa cancelled	400 Bad Request
+        POST: /api/reservations/v2/{id}/pay/
+    """
+    @action(detail=True, methods=["post"])
+    def pay(self,request, pk=None):
+        #check it is itself user propriataire
+        reservation = self.get_object()
+        if reservation.user!=request.user:
+            return Response(
+                {"error":"You can pay Only your own reservation!"},
+                status = status.HTTP_403_FORBIDDEN,
+            )
+        #check stat of status only pending can 
+        if reservation.status!=Reservation.Status.PENDING:
+            return Response(
+                {"error":"Cannot pay a reservation with this status:{reservation.status}!"},
+                status = status.HTTP_400_BAD_REQUEST,
+            )
+        reservation.status=Reservation.Status.CONFIRMED
+        reservation.save()
+        return Response(
+            {"message":"Payment successfully. reservation confirmed:status:{reservation.status}"},
+            status = status.HTTP_200_OK,
+        )
+        
+    #cancel
+    @action(detail=True, methods =["post"])
+    def cancel(self,request,pk=None):
+        reservation = self.get_object()
+        #check is same users
+        if reservation.user!=request.user:
+            return Response(
+                {"error":"You can only cancel your own reservation!"},
+                status = status.HTTP_403_FORBIDDEN,
+            )
+        #again impossible ,if status was cancelled 
+        if reservation.status  == Reservation.Status.CANCELLED:
+            return Response(
+                {"error":"Reservation is  already cancelled"},
+                status = status.HTTP_400_BAD_REQUEST,
+            )
+        #action
+        reservation.status = Reservation.Status.CANCELLED
+        reservation.save()
+        return Response(
+            {"message":"cancelled successfuly!","status":reservation.status},
+            status = status.HTTP_200_OK,
+        )
+
+        
+
+   
 
 User = get_user_model()
 @require_http_methods(['GET']) #mean only get method is allowed

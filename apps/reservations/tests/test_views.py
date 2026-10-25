@@ -69,6 +69,7 @@ def test_cancelled_reservation_frees_slot(client):
        "start_time":"2020-02-02T12:00:00",
        "end_time":"2020-02-02T17:00:00"
    }
+   client.force_login(user)
    res_4 = client.post("/api/reservations/create/",
                        data = json.dumps(payloa_4),
                        content_type="application/json")

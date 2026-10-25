@@ -2,8 +2,9 @@ from django.shortcuts import render,get_object_or_404
 from django.http import JsonResponse
 from .models import Room
 from django.db.models import Q,Count
+from apps.reservations.models import Reservation
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,action
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework import status
@@ -22,6 +23,14 @@ class RoomViewSet(viewsets.ModelViewSet):
     """
     queryset = Room.objects.filter(is_active = True)
     serializer_class  = RoomSerializer
+    filterset_fields = ["capacity", "location", "is_active"]     # exact match
+    search_fields = ["name", "location"]                         # free-text search
+    ordering_fields = ["name", "capacity", "created_at"]  
+
+   
+
+
+
     
      
 
