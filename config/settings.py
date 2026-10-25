@@ -1,5 +1,18 @@
 import os
 import sys
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-only-change-in-prod")
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+
+#Render uses *.onrender.com subdomains
+ALLOWED_HOSTS = os.environ.get(
+    "ALLOWED_HOSTS","localhost,127.0.0.1,.onrender.com"
+    ).split(",")
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    "CSRF_TRUSTED_ORIGINS","https://*.onrender.com"
+).split(",")
+
 
 """
 Django settings for config project.
@@ -81,30 +94,33 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    # Production DB config (Postgres) — used by Docker
-    # Config DB prod (Postgres) — utilisée par Docker
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get("POSTGRES_DB","roomreserve"),
-        "USER":os.environ.get("POSTGRES_USER","roomreserve"),
-        "PASSWORD":os.environ.get("POSTGRES_PASSWORD","roomreserve"),
-        "HOST":os.environ.get("POSTGRES_HOST","localhost"),
-        "PORT":os.environ.get("POSTGRES_PORT",5432)
-    }
-}
-# Tests use SQLite (fast, isolated) / Les tests utilisent SQLite (rapide, isolé)
-if "pytest" in sys.modules:
-    DATABASES ={
-
-        "default":{
-            "ENGINE":"django.db.backends.sqlite3",
-            "NAME":str(BASE_DIR / "db.sqlite3"),
+import dj_database_url
+if "pytest"in sys.modules: # Tests use SQLite (fast, isolated) / Les tests utilisent SQLite (rapide, isolé)
+    DATABASES = {
+        "default":
+        {
+            "ENGIME":"django.db.backends.sqlite3",
+            "NAME":str(BASE_DIR/  "db.sqlite3"),
         }
-
-       
     }
+elif os.environ.get("DATABASE_URL"):
+    DATABASES = {
+        "default":dj_database_url.parse(os.environ["DATABASE_URL"])
+    }
+else:
+    DATABASES = {
+            # Production DB config (Postgres) — used by Docker
+            'default':
+            {
+                "ENGIME":"django.db.backends.postgresql",
+                "NAME":os.environ.get("POSTGRES_DB","roomreserve"),
+                "USER":os.environ.get("POSTGRES_USER","roomreserve"),
+                "PASSWORD":os.environ.get("POSTGRES_PASSWORD","roomreserve"),
+                "HOST":os.environ.get("POSTGRES_HOST","localhost"),
+                "PORT":os.environ.get("POSTGRES_PORT",5432),
+            }
+    }
+
 
 
 
