@@ -6,5 +6,5 @@ python manage.py migrate --noinput
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
-echo "🚀 Starting gunicorn $SPORT"
-exec gunicorn config.wsgi.application --bind 0.0.0.0:$SPORT --workers 2
+echo "🚀 Starting gunicorn $PORT"
+exec gunicorn config.wsgi.application --bind 0.0.0.0:${PORT:-8000} --workers 2
