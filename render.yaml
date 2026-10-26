@@ -16,8 +16,7 @@ services:
         value: .onrender.com
       - key: DEBUG
         value: "False"
-      - ket: PORT
-        value: 8000
+     
 
 databases:
   - name: roomreserve-db
