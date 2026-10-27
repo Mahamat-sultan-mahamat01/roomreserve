@@ -68,4 +68,4 @@ python -m pytest -s -v
 
 ##markdown
 ```screenshots
-![Swagger UI ](<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/e4dfab74-923c-42d2-9ed1-a564a9697dc4" />)
+![Swagger UI](https://github.com/user-attachments/assets/e4dfab74-923c-42d2-9ed1-a564a9697dc4")
