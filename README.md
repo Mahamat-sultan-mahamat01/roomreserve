@@ -44,6 +44,22 @@ A production-ready REST API for room reservation management, built with Django R
 | `POST` | `/api/reservations/v2/{id}/cancel/` | Cancel reservation |
 | `GET` | `/api/docs/` | Swagger UI Documentation |
 
+#🐳 Run Locally
+```bash
+# 1. Clone the reposity
+git clone https://github.com/Mahamat-sultan-mahamat01/roomreserve.git
+cd roomreserve
+# 2. Start containers
+docker compose up --build -d
+
+# 3. Run migrations
+docker compose exec web python manage.py migrate
+# 4? Create a superuser
+docker compose exec web python manage.py createsuperuser
+
+# 5. Access the API
+# Swagger: http://localhost:8000/api/docs/
+# Admin: http://localhost:8000/admin/
 ---
 ##  🧪 Testing
 The project includes a full suite of automated tests:
