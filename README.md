@@ -45,16 +45,22 @@ A production-ready REST API for room reservation management, built with Django R
 | `GET` | `/api/docs/` | Swagger UI Documentation |
 
 #🐳 Run Locally
+
 ```bash
-# 1. Clone the reposity
+## 🐳 Run Locally
+
+```bash
+# 1. Clone the repository
 git clone https://github.com/Mahamat-sultan-mahamat01/roomreserve.git
 cd roomreserve
+
 # 2. Start containers
 docker compose up --build -d
 
 # 3. Run migrations
 docker compose exec web python manage.py migrate
-# 4? Create a superuser
+
+# 4. Create a superuser
 docker compose exec web python manage.py createsuperuser
 
 # 5. Access the API
