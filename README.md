@@ -44,9 +44,7 @@ A production-ready REST API for room reservation management, built with Django R
 | `POST` | `/api/reservations/v2/{id}/cancel/` | Cancel reservation |
 | `GET` | `/api/docs/` | Swagger UI Documentation |
 
-#🐳 Run Locally
 
-```bash
 ## 🐳 Run Locally
 
 ```bash
